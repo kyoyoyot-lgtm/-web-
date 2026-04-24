@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>残薬調整 </title>
+
+<style>
+
+  * { box-sizing: border-box; }
+
+  :root { --bg: #f0f2f5; --card: #ffffff; --blue: #0056b3; --accent: #eef3ff; }
+
+  
+
+  body { 
+
+    margin: 0; padding: 10px; 
+
+    font-family: sans-serif; background: var(--bg); 
+
+    height: 100vh; width: 100vw; 
+
+    overflow: hidden;
+
+    display: flex; flex-direction: column;
+
+  }
+
+
+
+  header { 
+
+    height: 80px; flex-shrink: 0;
+
+    display: flex; justify-content: space-between; align-items: center; 
+
+    padding: 0 10px; margin-bottom: 10px;
+
+  }
+
+
+
+  .main-grid { 
+
+    flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; min-height: 0;
+
+  }
+
+
+
+  /* 右上の日付エリア */
+
+  .date-box {
+
+    background: white; padding: 5px 20px; border-radius: 12px; 
+
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+
+    border: 2px solid var(--blue);
+
+    display: flex; gap: 15px; align-items: center;
+
+  }
+
+  
+
+  /* 全ての数字に適用する共通クラス */
+
+  .unified-number {
+
+    font-size: 45px !important;
+
+    font-weight: 900 !important;
+
+    line-height: 1;
+
+  }
+
+
+
+  .end-date-val { color: #d9480f; }
+
+
+
+  .section-left { 
+
+    background: var(--card); border-radius: 12px; padding: 25px; 
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+
+    display: flex; flex-direction: column; justify-content: center;
+
+  }
+
+
+
+  .section-right { 
+
+    display: grid; grid-template-rows: 1fr 1fr 1.2fr; gap: 10px; min-height: 0;
+
+  }
+
+
+
+  .field { margin-bottom: 20px; }
+
+  label { display: block; font-size: 18px; font-weight: bold; margin-bottom: 5px; color: #555; }
+
+  input { 
+
+    width: 100%; padding: 12px; font-size: 32px; font-weight: bold; 
+
+    border: 2px solid #ccc; border-radius: 10px; outline: none; 
+
+  }
+
+
+
+  .result-card { 
+
+    background: var(--card); border-radius: 12px; border: 1px solid #ddd;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+
+    padding: 8px; overflow: hidden;
+
+  }
+
+  
+
+  .card-label { font-size: 16px; font-weight: bold; color: #666; margin-bottom: 8px; }
+
+  .card-value { color: #333; display: flex; align-items: baseline; }
+
+  .unit { font-size: 20px; margin-left: 8px; font-weight: bold; color: #333; }
+
+
+
+  .main-result { background: var(--blue); color: white; border: none; }
+
+  .main-result .card-label { color: rgba(255,255,255,0.9); }
+
+  .main-result .card-value { color: white; }
+
+  .main-result .unit { color: white; }
+
+
+
+  .breakdown { 
+
+    margin-top: 8px; padding: 5px; background: rgba(255,255,255,0.2); 
+
+    border-radius: 6px; font-weight: bold; font-size: 16px; width: 92%; text-align: center;
+
+  }
+
+  
+
+  .warn-yellow { background: #fff9db !important; border-color: #ffec99 !important; }
+
+</style>
+
+</head>
+
+<body>
+
+
+
+<header>
+
+  <h2 style="margin:0; font-size: 22px;">残薬調整<small></small></h2>
+
+  <div class="date-box">
+
+    <div style="display:flex; flex-direction:column; align-items:flex-start; font-weight:bold;">
+
+      <span style="font-size:12px; color:#666;">本日: <span id="todayDisp"></span></span>
+
+      <span style="color:var(--blue); font-size:14px;">飲み終わる予定日</span>
+
+    </div>
+
+    <span id="endDisp" class="unified-number end-date-val">-</span>
+
+  </div>
+
+</header>
+
+
+
+<div class="main-grid">
+
+  <div class="section-left">
+
+    <div class="field"><label>1日量</label><input type="number" id="dose" step="any"></div>
+
+    <div class="field"><label>処方日数</label><input type="number" id="rx" step="1"></div>
+
+    <div class="field"><label>残薬数</label><input type="number" id="rem" step="any"></div>
+
+  </div>
+
+
+
+  <div class="section-right">
+
+    <div class="result-card" id="daysCard">
+
+      <div class="card-label">残薬日数</div>
+
+      <div class="card-value">
+
+        <span id="outDays" class="unified-number">-</span><span class="unit">日分</span>
+
+      </div>
+
+    </div>
+
+    
+
+    <div class="result-card" id="fracCard">
+
+      <div class="card-label">端数</div>
+
+      <div class="card-value">
+
+        <span id="outFrac" class="unified-number">-</span>
+
+      </div>
+
+    </div>
+
+    
+
+    <div class="result-card main-result">
+
+      <div class="card-label">変更後の処方日数</div>
+
+      <div class="card-value">
+
+        <span id="outAdj" class="unified-number">-</span><span class="unit">日分</span>
+
+      </div>
+
+      <div id="outBD" class="breakdown" style="display:none;"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+  const elDose = document.getElementById('dose'), elRx = document.getElementById('rx'), elRem = document.getElementById('rem');
+
+  const inputs = [elDose, elRx, elRem];
+
+  const today = new Date();
+
+  document.getElementById('todayDisp').textContent = `${today.getFullYear()}/${today.getMonth()+1}/${today.getDate()}`;
+
+
+
+  function calc() {
+
+    const d = parseFloat(elDose.value), r = parseFloat(elRx.value), m = parseFloat(elRem.value);
+
+    
+
+    if (isNaN(d) || d <= 0 || isNaN(m)) {
+
+      document.getElementById('outDays').textContent = "-";
+
+      document.getElementById('outFrac').textContent = "-";
+
+      document.getElementById('outAdj').textContent = "-";
+
+      document.getElementById('endDisp').textContent = "-";
+
+      document.getElementById('outBD').style.display = 'none';
+
+      document.getElementById('fracCard').classList.remove('warn-yellow');
+
+      return;
+
+    }
+
+
+
+    const remainDays = Math.floor(m / d + 1e-9);
+
+    const frac = Math.max(0, m - (remainDays * d));
+
+    const fmtFrac = Math.abs(frac) < 1e-6 ? "0" : parseFloat(frac.toFixed(3));
+
+    
+
+    document.getElementById('outDays').textContent = remainDays;
+
+    document.getElementById('outFrac').textContent = fmtFrac;
+
+    document.getElementById('fracCard').classList.toggle('warn-yellow', Math.abs(frac) > 1e-6);
+
+
+
+    if (!isNaN(r)) {
+
+      let adj = Math.ceil(r - (m / d) - 1e-9);
+
+      adj = adj < 0 ? 0 : adj;
+
+      document.getElementById('outAdj').textContent = adj;
+
+
+
+      const total = remainDays + adj;
+
+      const target = new Date();
+
+      target.setDate(today.getDate() + total);
+
+      document.getElementById('endDisp').textContent = `${target.getFullYear()}/${target.getMonth()+1}/${target.getDate()}`;
+
+
+
+      const bd = document.getElementById('outBD');
+
+      if (remainDays > r) {
+
+        bd.style.display = 'block';
+
+        bd.innerHTML = `内訳：処方 ${r}日 ＋ 過剰 ${remainDays - r}日`;
+
+      } else {
+
+        bd.style.display = 'none';
+
+      }
+
+    }
+
+  }
+
+
+
+  inputs.forEach((el, i) => {
+
+    el.addEventListener('input', calc);
+
+    el.addEventListener('focus', () => el.select());
+
+    el.addEventListener('keydown', (e) => {
+
+      if (e.key === 'Enter') {
+
+        e.preventDefault();
+
+        inputs[(i + 1) % 3].focus();
+
+      }
+
+    });
+
+  });
+
+
+
+  elDose.focus();
+
+</script>
+
+</body>
+
+</html>
