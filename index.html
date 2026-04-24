@@ -1,167 +1,383 @@
 <!DOCTYPE html>
+
 <html lang="ja">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>残薬調整 Mobile</title>
+
+<title>残薬調整 </title>
+
 <style>
+
   * { box-sizing: border-box; }
-  :root { --bg: #f8f9fa; --card: #ffffff; --blue: #007bff; --text: #333; }
+
+  :root { --bg: #f0f2f5; --card: #ffffff; --blue: #0056b3; --accent: #eef3ff; }
+
   
+
   body { 
+
     margin: 0; padding: 10px; 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg); color: var(--text);
-    overflow-x: hidden;
+
+    font-family: sans-serif; background: var(--bg); 
+
+    height: 100vh; width: 100vw; 
+
+    overflow: hidden;
+
+    display: flex; flex-direction: column;
+
   }
 
-  /* 上半分で完結させるためのコンテナ */
-  .container {
-    max-width: 500px; margin: 0 auto;
-    display: flex; flex-direction: column; gap: 8px;
+
+
+  header { 
+
+    height: 80px; flex-shrink: 0;
+
+    display: flex; justify-content: space-between; align-items: center; 
+
+    padding: 0 10px; margin-bottom: 10px;
+
   }
 
-  header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 4px 8px; background: white; border-radius: 8px; border-left: 4px solid var(--blue);
+
+
+  .main-grid { 
+
+    flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; min-height: 0;
+
   }
+
+
+
+  /* 右上の日付エリア */
+
+  .date-box {
+
+    background: white; padding: 5px 20px; border-radius: 12px; 
+
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+
+    border: 2px solid var(--blue);
+
+    display: flex; gap: 15px; align-items: center;
+
+  }
+
   
-  .today-info { font-size: 11px; color: #666; }
-  .end-date-box { text-align: right; }
-  .end-date-label { font-size: 11px; font-weight: bold; color: var(--blue); display: block; }
-  .end-date-val { font-size: 18px; font-weight: 900; color: #d9480f; }
 
-  /* 入力と結果のメインエリア */
-  .main-card {
-    background: var(--card); padding: 12px; border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px;
+  /* 全ての数字に適用する共通クラス */
+
+  .unified-number {
+
+    font-size: 45px !important;
+
+    font-weight: 900 !important;
+
+    line-height: 1;
+
   }
 
-  /* 入力フォーム */
-  .input-group { display: flex; flex-direction: column; gap: 8px; }
-  .field { display: flex; align-items: center; justify-content: space-between; }
-  .field label { font-size: 13px; font-weight: bold; color: #555; }
-  .field input { 
-    width: 65%; padding: 8px; font-size: 18px; font-weight: bold;
-    border: 1px solid #ccc; border-radius: 6px; text-align: right;
-    background: #fdfdfd;
+
+
+  .end-date-val { color: #d9480f; }
+
+
+
+  .section-left { 
+
+    background: var(--card); border-radius: 12px; padding: 25px; 
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+
+    display: flex; flex-direction: column; justify-content: center;
+
   }
 
-  /* 結果表示 */
-  .result-group { display: flex; flex-direction: column; gap: 6px; }
-  .res-item { 
-    padding: 6px; border-radius: 8px; border: 1px solid #eee;
-    text-align: center; display: flex; flex-direction: column; justify-content: center;
-  }
-  .res-label { font-size: 10px; font-weight: bold; color: #777; margin-bottom: 2px; }
-  .res-val { font-size: 20px; font-weight: 900; }
-  .unit { font-size: 12px; margin-left: 2px; }
 
-  .highlight { background: var(--blue); color: white; border: none; }
-  .highlight .res-label { color: rgba(255,255,255,0.9); }
+
+  .section-right { 
+
+    display: grid; grid-template-rows: 1fr 1fr 1.2fr; gap: 10px; min-height: 0;
+
+  }
+
+
+
+  .field { margin-bottom: 20px; }
+
+  label { display: block; font-size: 18px; font-weight: bold; margin-bottom: 5px; color: #555; }
+
+  input { 
+
+    width: 100%; padding: 12px; font-size: 32px; font-weight: bold; 
+
+    border: 2px solid #ccc; border-radius: 10px; outline: none; 
+
+  }
+
+
+
+  .result-card { 
+
+    background: var(--card); border-radius: 12px; border: 1px solid #ddd;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+
+    padding: 8px; overflow: hidden;
+
+  }
+
   
-  .warn-yellow { background: #fff9db !important; }
-  .breakdown { font-size: 10px; margin-top: 2px; font-weight: normal; opacity: 0.9; }
+
+  .card-label { font-size: 16px; font-weight: bold; color: #666; margin-bottom: 8px; }
+
+  .card-value { color: #333; display: flex; align-items: baseline; }
+
+  .unit { font-size: 20px; margin-left: 8px; font-weight: bold; color: #333; }
+
+
+
+  .main-result { background: var(--blue); color: white; border: none; }
+
+  .main-result .card-label { color: rgba(255,255,255,0.9); }
+
+  .main-result .card-value { color: white; }
+
+  .main-result .unit { color: white; }
+
+
+
+  .breakdown { 
+
+    margin-top: 8px; padding: 5px; background: rgba(255,255,255,0.2); 
+
+    border-radius: 6px; font-weight: bold; font-size: 16px; width: 92%; text-align: center;
+
+  }
+
+  
+
+  .warn-yellow { background: #fff9db !important; border-color: #ffec99 !important; }
+
 </style>
+
 </head>
+
 <body>
 
-<div class="container">
-  <header>
-    <div class="today-info">本日: <span id="todayDisp"></span></div>
-    <div class="end-date-box">
-      <span class="end-date-label">終了予定日</span>
-      <span id="endDisp" class="end-date-val">-</span>
-    </div>
-  </header>
 
-  <main class="main-card">
-    <div class="input-group">
-      <div class="field">
-        <label>1日量</label>
-        <input type="number" id="dose" step="any" inputmode="decimal" placeholder="0">
-      </div>
-      <div class="field">
-        <label>処方日</label>
-        <input type="number" id="rx" step="1" inputmode="numeric" placeholder="0">
-      </div>
-      <div class="field">
-        <label>残薬数</label>
-        <input type="number" id="rem" step="any" inputmode="decimal" placeholder="0">
-      </div>
+
+<header>
+
+  <h2 style="margin:0; font-size: 22px;">残薬調整<small></small></h2>
+
+  <div class="date-box">
+
+    <div style="display:flex; flex-direction:column; align-items:flex-start; font-weight:bold;">
+
+      <span style="font-size:12px; color:#666;">本日: <span id="todayDisp"></span></span>
+
+      <span style="color:var(--blue); font-size:14px;">飲み終わる予定日</span>
+
     </div>
 
-    <div class="result-group">
-      <div class="res-item" id="daysCard">
-        <div class="res-label">残薬日数</div>
-        <div><span id="outDays" class="res-val">-</span><span class="unit">日分</span></div>
+    <span id="endDisp" class="unified-number end-date-val">-</span>
+
+  </div>
+
+</header>
+
+
+
+<div class="main-grid">
+
+  <div class="section-left">
+
+    <div class="field"><label>1日量</label><input type="number" id="dose" step="any"></div>
+
+    <div class="field"><label>処方日数</label><input type="number" id="rx" step="1"></div>
+
+    <div class="field"><label>残薬数</label><input type="number" id="rem" step="any"></div>
+
+  </div>
+
+
+
+  <div class="section-right">
+
+    <div class="result-card" id="daysCard">
+
+      <div class="card-label">残薬日数</div>
+
+      <div class="card-value">
+
+        <span id="outDays" class="unified-number">-</span><span class="unit">日分</span>
+
       </div>
-      <div class="res-item" id="fracCard">
-        <div class="res-label">端数</div>
-        <div><span id="outFrac" class="res-val">-</span></div>
-      </div>
-      <div class="res-item highlight">
-        <div class="res-label">今回の処方</div>
-        <div><span id="outAdj" class="res-val">-</span><span class="unit">日分</span></div>
-        <div id="outBD" class="breakdown"></div>
-      </div>
+
     </div>
-  </main>
+
+    
+
+    <div class="result-card" id="fracCard">
+
+      <div class="card-label">端数</div>
+
+      <div class="card-value">
+
+        <span id="outFrac" class="unified-number">-</span>
+
+      </div>
+
+    </div>
+
+    
+
+    <div class="result-card main-result">
+
+      <div class="card-label">変更後の処方日数</div>
+
+      <div class="card-value">
+
+        <span id="outAdj" class="unified-number">-</span><span class="unit">日分</span>
+
+      </div>
+
+      <div id="outBD" class="breakdown" style="display:none;"></div>
+
+    </div>
+
+  </div>
+
 </div>
 
+
+
 <script>
+
   const elDose = document.getElementById('dose'), elRx = document.getElementById('rx'), elRem = document.getElementById('rem');
+
   const inputs = [elDose, elRx, elRem];
+
   const today = new Date();
-  document.getElementById('todayDisp').textContent = `${today.getMonth()+1}/${today.getDate()}`;
+
+  document.getElementById('todayDisp').textContent = `${today.getFullYear()}/${today.getMonth()+1}/${today.getDate()}`;
+
+
 
   function calc() {
+
     const d = parseFloat(elDose.value), r = parseFloat(elRx.value), m = parseFloat(elRem.value);
+
     
+
     if (isNaN(d) || d <= 0 || isNaN(m)) {
-      ["outDays","outFrac","outAdj","endDisp"].forEach(id => document.getElementById(id).textContent = "-");
-      document.getElementById('outBD').textContent = "";
+
+      document.getElementById('outDays').textContent = "-";
+
+      document.getElementById('outFrac').textContent = "-";
+
+      document.getElementById('outAdj').textContent = "-";
+
+      document.getElementById('endDisp').textContent = "-";
+
+      document.getElementById('outBD').style.display = 'none';
+
       document.getElementById('fracCard').classList.remove('warn-yellow');
+
       return;
+
     }
+
+
 
     const remainDays = Math.floor(m / d + 1e-9);
+
     const frac = Math.max(0, m - (remainDays * d));
+
     const fmtFrac = Math.abs(frac) < 1e-6 ? "0" : parseFloat(frac.toFixed(3));
+
     
+
     document.getElementById('outDays').textContent = remainDays;
+
     document.getElementById('outFrac').textContent = fmtFrac;
+
     document.getElementById('fracCard').classList.toggle('warn-yellow', Math.abs(frac) > 1e-6);
 
+
+
     if (!isNaN(r)) {
+
       let adj = Math.ceil(r - (m / d) - 1e-9);
+
       adj = adj < 0 ? 0 : adj;
+
       document.getElementById('outAdj').textContent = adj;
 
+
+
       const total = remainDays + adj;
+
       const target = new Date();
+
       target.setDate(today.getDate() + total);
-      document.getElementById('endDisp').textContent = `${target.getMonth()+1}/${target.getDate()}`;
+
+      document.getElementById('endDisp').textContent = `${target.getFullYear()}/${target.getMonth()+1}/${target.getDate()}`;
+
+
 
       const bd = document.getElementById('outBD');
-      bd.textContent = (remainDays > r) ? `過剰: ${remainDays - r}日` : "";
+
+      if (remainDays > r) {
+
+        bd.style.display = 'block';
+
+        bd.innerHTML = `内訳：処方 ${r}日 ＋ 過剰 ${remainDays - r}日`;
+
+      } else {
+
+        bd.style.display = 'none';
+
+      }
+
     }
+
   }
 
+
+
   inputs.forEach((el, i) => {
+
     el.addEventListener('input', calc);
+
     el.addEventListener('focus', () => el.select());
+
     el.addEventListener('keydown', (e) => {
+
       if (e.key === 'Enter') {
+
         e.preventDefault();
-        const next = inputs[i + 1] || inputs[0];
-        next.focus();
+
+        inputs[(i + 1) % 3].focus();
+
       }
+
     });
+
   });
 
+
+
   elDose.focus();
+
 </script>
+
 </body>
+
 </html>
