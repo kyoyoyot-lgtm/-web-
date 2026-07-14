@@ -202,24 +202,56 @@
   .bottom-flex {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end; /* 下揃えで高さを固定 */
+    align-items: stretch; /* 左情報と右ボックスの高さを完全に揃える */
     margin-top: 5px;
     gap: 20px;
-    height: 110px; /* エリア全体の高さを110pxに完全固定 */
   }
 
-  /* 左側：情報エリア全体を110pxに固定して内枠を綺麗に配置 */
+  /* 左側：情報エリア全体。高さを完全にキープし、中身が変化しても全体のレイアウトを動かさない */
   .left-info-area {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* 下側を基準に整列 */
-    gap: 8px;
+    justify-content: space-between; /* 内訳（上）とガイド（下）を等間隔で固定 */
     flex: 1;
-    height: 100%;
     max-width: 550px;
+    height: 150px; /* ここを完全に固定（文字重なり＆レイアウト崩れ防止） */
   }
 
-  /* 左下の使い方ガイド（高さを固定し、はみ出しを防ぐ） */
+  /* 内訳表示を包む枠：高さ44pxを最初から常にキープしておく */
+  .breakdown-wrap {
+    height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* 内訳表示：絶対配置をやめ、固定枠の中で綺麗に表示 */
+  .breakdown { 
+    font-size: 15px;
+    font-weight: 700;
+    color: #334155;
+    background: #ffffff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border-left: 5px solid var(--primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    white-space: nowrap;
+    width: 100%;
+  }
+  
+  /* 内訳が無い時に表示する仮プレースホルダー（高さを維持しガタつきを防ぐ） */
+  .breakdown-placeholder {
+    font-size: 13px;
+    color: #94a3b8;
+    background: transparent;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 14px;
+    width: 100%;
+    text-align: center;
+    user-select: none;
+  }
+
+  /* 左下の使い方ガイド（高さを98pxに固定。内訳と絶対に重ならない） */
   .guide-box {
     background: #e2e8f0;
     padding: 10px 16px;
@@ -227,7 +259,7 @@
     font-size: 12px;
     color: #475569;
     line-height: 1.5;
-    height: 110px; /* 内訳がない時の高さを固定 */
+    height: 98px; 
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -236,30 +268,8 @@
     margin: 4px 0 0 0;
     padding-left: 18px;
   }
-
-  /* 内訳表示（ガイドの上にピタッと重ね、高さを崩さないように絶対配置を応用） */
-  .breakdown-wrap {
-    position: relative;
-    height: 0; /* 高さをゼロにして下に影響を与えない */
-  }
-
-  .breakdown { 
-    position: absolute;
-    bottom: 8px; /* ガイドボックスのすぐ上に浮くように配置 */
-    left: 0;
-    font-size: 15px;
-    font-weight: 700;
-    color: #334155;
-    background: #ffffff;
-    padding: 8px 14px;
-    border-radius: 8px;
-    border-left: 5px solid var(--primary);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    white-space: nowrap;
-    z-index: 10;
-  }
   
-  /* 右下の予定日ボックス */
+  /* 右下の予定日ボックス：左側の情報エリア（150px）と完全に高さを合わせる */
   .date-box {
     background: #ffffff;
     padding: 12px 24px;
@@ -270,7 +280,7 @@
     flex-direction: column;
     gap: 4px;
     min-width: 240px;
-    height: 110px; /* 左側・右側で高さを統一 */
+    height: 150px; 
     justify-content: center;
   }
   
@@ -382,9 +392,11 @@
 
     <!-- 最下部（内訳＆予定日＆使い方） -->
     <div class="bottom-flex">
-      <!-- 左側: 内訳（浮遊配置）と使い方ガイド（高さ固定） -->
+      <!-- 左側: 内訳スペースと使い方ガイド（高さ150pxで完全固定） -->
       <div class="left-info-area">
         <div class="breakdown-wrap">
+          <!-- 計算前や内訳が無いときはプレースホルダーを表示し、内訳があるときは入れ替える -->
+          <div id="outBDPlaceholder" class="breakdown-placeholder">過剰分の内訳はここに自動表示されます</div>
           <div id="outBD" class="breakdown" style="display:none;"></div>
         </div>
         <div class="guide-box">
@@ -422,7 +434,10 @@
     document.getElementById('outAdj').textContent = "-";
     document.getElementById('outAdjTotal').textContent = "-";
     document.getElementById('endDisp').textContent = "-";
+    
     document.getElementById('outBD').style.display = 'none';
+    document.getElementById('outBDPlaceholder').style.display = 'block';
+    
     document.getElementById('outFrac').classList.remove('warn-yellow');
   }
 
@@ -449,7 +464,10 @@
       document.getElementById('outAdj').textContent = "-";
       document.getElementById('outAdjTotal').textContent = "-";
       document.getElementById('endDisp').textContent = "-";
+      
       document.getElementById('outBD').style.display = 'none';
+      document.getElementById('outBDPlaceholder').style.display = 'block';
+      
       document.getElementById('outFrac').classList.remove('warn-yellow');
       return;
     }
@@ -480,8 +498,10 @@
     document.getElementById('endDisp').textContent = `${target.getFullYear()}/${target.getMonth()+1}/${target.getDate()}`;
 
     const bd = document.getElementById('outBD');
+    const bdPlaceholder = document.getElementById('outBDPlaceholder');
     if (m > origTotal) {
-      bd.style.display = 'inline-block';
+      bd.style.display = 'block';
+      bdPlaceholder.style.display = 'none';
       const overDays = remainDays - r;
       if (hasFrac) {
         bd.innerHTML = `内訳：処方 ${r}日 ＋ 過剰 ${overDays}日 と ${fmtFrac} 錠 (包)`;
@@ -490,6 +510,7 @@
       }
     } else {
       bd.style.display = 'none';
+      bdPlaceholder.style.display = 'block';
     }
   }
 
