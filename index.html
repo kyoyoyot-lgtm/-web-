@@ -202,8 +202,25 @@
   .bottom-flex {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end; /* 下揃えに変更して安定感を出す */
     margin-top: 5px;
+    gap: 20px;
+  }
+
+  /* 左下の使い方ガイド */
+  .guide-box {
+    background: #e2e8f0;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #475569;
+    line-height: 1.5;
+    flex: 1;
+    max-width: 500px;
+  }
+  .guide-box ul {
+    margin: 4px 0 0 0;
+    padding-left: 18px;
   }
 
   /* 内訳表示 */
@@ -216,6 +233,7 @@
     border-radius: 8px;
     border-left: 5px solid var(--primary);
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    align-self: flex-start; /* 内訳は上側に配置 */
   }
   
   /* 右下の予定日ボックス */
@@ -337,11 +355,20 @@
       </div>
     </div>
 
-    <!-- 最下部（内訳＆予定日） -->
+    <!-- 最下部（内訳＆予定日＆使い方） -->
     <div class="bottom-flex">
-      <!-- 内訳メッセージエリア -->
-      <div id="outBD" class="breakdown" style="display:none;"></div>
-      <div id="spacer" style="flex:1;"></div>
+      <!-- 左側: 使い方ガイド または 内訳メッセージエリア -->
+      <div id="left-info-area" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
+        <div id="outBD" class="breakdown" style="display:none;"></div>
+        <div class="guide-box">
+          <strong>💡 使い方ガイド</strong>
+          <ul>
+            <li>「1日量」「日分」「残薬数」を入力すると、リアルタイムで自動計算されます。</li>
+            <li><strong>Enterキー</strong>を押すと、次の入力ボックスへスムーズに移動します。</li>
+            <li>残薬が沢山ある場合は何日分に相当するか、何月何日まであるか表示されます。</li>
+          </ul>
+        </div>
+      </div>
 
       <!-- 右下: 予定日ボックス -->
       <div class="date-box">
