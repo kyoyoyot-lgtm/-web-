@@ -17,7 +17,7 @@
   }
   
   body { 
-    margin: 0; padding: 20px; 
+    margin: 0; padding: 10px; 
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background: var(--bg); 
     color: var(--text);
@@ -30,9 +30,10 @@
 
   .container {
     width: 100%;
-    max-width: 950px;
+    max-width: 900px;
+    max-height: 95vh; /* 縦がはみ出さないように制限 */
     background: white;
-    border-radius: 16px;
+    border-radius: 12px;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
@@ -43,9 +44,9 @@
   /* アプリタイトル（左上固定） */
   .app-title {
     position: absolute;
-    top: 15px;
-    left: 20px;
-    font-size: 14px;
+    top: 10px;
+    left: 15px;
+    font-size: 11px;
     font-weight: 700;
     color: #94a3b8;
     letter-spacing: 0.05em;
@@ -55,62 +56,62 @@
   .row {
     display: flex;
     align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
+    gap: 12px;
+    flex-wrap: nowrap; /* 折り返して縦に伸びるのを防止 */
   }
 
   .item-group {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 20px;
+    gap: 8px;
+    font-size: 16px;
     font-weight: 600;
     white-space: nowrap; /* 改行を防止 */
   }
 
   .unit {
     color: #64748b;
-    font-size: 18px;
+    font-size: 14px;
     white-space: nowrap; /* 改行を防止 */
   }
 
   /* 計算用演算子（× や ＋）のスタイル */
   .operator {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
     color: #94a3b8;
-    margin: 0 5px;
+    margin: 0 2px;
     user-select: none;
   }
 
   /* 合計値を表示する薄型ラベル */
   .total-badge {
     background: #f1f5f9;
-    padding: 6px 12px;
+    padding: 4px 10px;
     border-radius: 6px;
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
     color: #475569;
-    margin-left: 10px;
+    margin-left: 5px;
     border: 1px solid #e2e8f0;
     white-space: nowrap;
     display: inline-block;
-    min-width: 150px; /* 0や-の時に幅が潰れるのを防ぐ */
+    min-width: 130px; /* 0や-の時に幅が潰れるのを防ぐ */
     text-align: center;
   }
 
   /* ----------------------------------
-     1・2段目：入力ゾーン（上部）
+      1・2段目：入力ゾーン（上部）
   ---------------------------------- */
   .input-zone {
-    padding: 45px 40px 25px 40px;
+    padding: 30px 30px 15px 30px; /* 余白をコンパクトに */
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 15px;
   }
 
   .zone-tag {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -121,13 +122,13 @@
 
   .label-input {
     color: var(--text);
-    min-width: 80px;
+    min-width: 60px;
   }
 
   input[type="number"] {
-    width: 110px;
-    height: 70px;
-    font-size: 32px;
+    width: 90px;
+    height: 50px; /* 高さを縮小 */
+    font-size: 24px; /* 文字サイズを少し縮小 */
     font-weight: 700;
     text-align: center;
     border: 2px solid var(--primary);
@@ -144,34 +145,34 @@
   }
 
   /* ----------------------------------
-     3段目以降：計算結果ゾーン（下部）
+      3段目以降：計算結果ゾーン（下部）
   ---------------------------------- */
   .result-zone {
     background: var(--result-section);
-    padding: 30px 40px 35px 40px;
+    padding: 20px 30px 20px 30px; /* 余白をコンパクトに */
     border-top: 2px dashed #cbd5e1;
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 15px;
   }
 
   .result-zone .zone-tag { color: #475569; }
 
   .label-result {
     color: #475569;
-    min-width: 80px;
+    min-width: 60px;
   }
   
   .label-wide {
-    min-width: 110px;
+    min-width: 80px;
     color: var(--text);
   }
 
   /* 計算結果のボックス（背景無色） */
   .result-box {
-    width: 110px;
-    height: 70px;
-    font-size: 32px;
+    width: 90px;
+    height: 50px; /* 高さを縮小 */
+    font-size: 24px; /* 文字サイズを少し縮小 */
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -194,7 +195,7 @@
   .vertical-group {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
     align-items: flex-start;
   }
 
@@ -202,53 +203,53 @@
   .bottom-flex {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center; /* 縦方向の中央寄せに変更して高さを節約 */
     margin-top: 5px;
   }
 
   /* 内訳表示 */
   .breakdown { 
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: #475569;
     background: #ffffff;
-    padding: 10px 16px;
+    padding: 8px 12px;
     border-radius: 6px;
     border-left: 4px solid var(--primary);
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    align-self: flex-start;
+    align-self: center;
   }
   
   /* 右下の予定日ボックス */
   .date-box {
     background: #ffffff;
-    padding: 12px 24px;
-    border-radius: 12px; 
+    padding: 8px 16px; /* パディングを詰める */
+    border-radius: 8px; 
     border: 2px solid var(--primary);
     box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    min-width: 220px;
+    gap: 2px;
+    min-width: 180px;
   }
   
   .date-title {
-    font-size: 14px;
+    font-size: 11px;
     color: var(--primary);
     font-weight: 700;
   }
   
   .today-text {
-    font-size: 11px;
+    font-size: 10px;
     color: #64748b;
     font-weight: 500;
   }
 
   .end-date-val {
-    font-size: 28px;
+    font-size: 20px; /* 少し縮小 */
     font-weight: 800;
     color: var(--accent);
-    margin-top: 2px;
+    margin-top: 1px;
   }
   
   /* 端数警告発生時：背景は透過のまま、文字と枠線だけ強調 */
@@ -313,25 +314,25 @@
           <span class="unit" style="font-weight: bold; color: var(--primary);">日分</span>
         </div>
         <!-- 変更後日数の下に入る合計表示 -->
-        <div class="total-badge" style="margin-left: 120px; margin-top: 2px; background: #e0f2fe; border-color: #bae6fd; color: #0369a1;">
+        <div class="total-badge" style="margin-left: 90px; margin-top: 2px; background: #e0f2fe; border-color: #bae6fd; color: #0369a1;">
           変更後合計: <span id="outAdjTotal">-</span> 錠 (包)
         </div>
       </div>
       
       <!-- 残薬日数グループ -->
-      <div class="vertical-group" style="margin-left: 15px;">
+      <div class="vertical-group" style="margin-left: 10px;">
         <div class="item-group">
           <span class="label-result">残薬日数</span>
           <div id="outDays" class="result-box">-</div>
           <span class="unit">日分</span>
         </div>
         <!-- 残薬日数の下に入れる合計表示 -->
-        <div class="total-badge" style="margin-left: 90px; margin-top: 2px;">
+        <div class="total-badge" style="margin-left: 70px; margin-top: 2px;">
           残薬合計: <span id="outRemDaysTotal">-</span> 錠 (包)
         </div>
       </div>
 
-      <span class="operator" style="margin-top: 18px; margin-left: 15px;">＋</span>
+      <span class="operator" style="margin-top: 12px; margin-left: 10px;">＋</span>
 
       <!-- 端数グループ -->
       <div class="item-group" style="margin-left: 5px; margin-top: 0;">
